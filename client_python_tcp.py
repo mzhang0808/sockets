@@ -9,7 +9,7 @@ while True:
         socket.inet_aton(IP)
         break
     except socket.error:
-        print("Could not connect to server")
+        print("Could not connect to server.")
 
 while True:
     # Take port # as input
@@ -51,7 +51,10 @@ s.send(command.encode('utf-8'))
 
 # Receive stream of data back
 l = s.recv(1024)
-filename = command + ".txt"
+
+temp = command.split(" > ")
+filename = temp[1]
+
 
 # Check first line sent from server [either error message or first line from file]
 firstLine = l.decode('utf-8')

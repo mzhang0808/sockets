@@ -1,7 +1,6 @@
 import subprocess
 import socket
 
-
 PORT = 3000
 
 # Creates socket instance with address family ipv4 and TCP protocol
@@ -22,12 +21,14 @@ while True:
     # Receive command with buffer size 1024
     data = c.recv(1024)
     cmd = data.decode('utf-8')
-    cmd = cmd + " > output.txt"
+
+    #4 #4date
+    temp = cmd.split(" > ")
+    filename = temp[1]
 
     # Run command using a shell - ensure that errors are caught
     try:
         out = subprocess.check_output(cmd, shell=True)
-
     # Any error will mean the command did not execute successfully - send a no response message to client
     # signifying the command failed                       
     except subprocess.CalledProcessError as grepexc:                                                                                                   
@@ -36,7 +37,7 @@ while True:
         break
 
     # Open file that command's output was stored in
-    f = open('output.txt', 'r')
+    f = open(filename, 'r')
     l = f.read(1024)
     
     # Read output back to client (potential multiple segments if size(line) > 1024)
