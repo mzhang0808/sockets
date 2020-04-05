@@ -46,23 +46,22 @@ except Exception:
     print("Could not connect to server.")
     sys.exit()
 
-# Send the command to server
+# Send the command to server 
 s.send(command.encode('utf-8'))
 
 # Receive stream of data back
 l = s.recv(1024)
 filename = command + ".txt"
 
-# Write to local file
-f = open(filename, 'w')
-
 # Check first line sent from server [either error message or first line from file]
 firstLine = l.decode('utf-8')
-
 # Error - no response from server
 if firstLine == "Did not receive response.":
     print("Did not receive response.")
     sys.exit()
+
+# Write to local file
+f = open(filename, 'w')
 
 # Write stream to a .txt file
 while (l):
