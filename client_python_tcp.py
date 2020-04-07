@@ -4,7 +4,7 @@ import socket
 while True:
     # Take IP as input
     IP = input("Enter server name or IP address:")
-    # Validate IP
+    # Validate IP in family ipV4
     try:
         socket.inet_aton(IP)
         break
@@ -46,6 +46,9 @@ except Exception:
     print("Could not connect to server.")
     sys.exit()
 
+if command.find(" > ") == -1:
+    command = command + " > " + command + ".txt"
+
 # Send the command to server 
 s.send(command.encode('utf-8'))
 
@@ -53,8 +56,8 @@ s.send(command.encode('utf-8'))
 l = s.recv(1024)
 
 temp = command.split(" > ")
-filename = temp[1]
 
+filename = temp[1]
 
 # Check first line sent from server [either error message or first line from file]
 firstLine = l.decode('utf-8')
@@ -68,7 +71,7 @@ f = open(filename, 'w')
 
 # Write stream to a .txt file
 while (l):
-    f.write(l.decode('utf-8'))
+    f.write(l.decode('utf-8')) 
     l = s.recv(1024)
 
 # Finished reading file

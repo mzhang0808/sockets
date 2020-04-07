@@ -39,4 +39,5 @@ command = (input("Enter command:"))
 # Makes UDP socket
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+addr = (IP, port)
 s.sendto((str(len(command))).encode('utf-8'),addr)
