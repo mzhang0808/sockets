@@ -36,6 +36,9 @@ while port > 65535 or port < 0:
 # Input Command 
 command = (input("Enter command:"))
 
+if command.find(" > ") == -1:
+    command = command + " > " + command + ".txt"
+
 # Makes UDP socket
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
