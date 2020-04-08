@@ -22,22 +22,22 @@ while True:
     data = c.recv(1024)
     cmd = data.decode('utf-8')
 
-    #4 #4date
+    # Get command and place output in output.txt
     temp = cmd.split(" > ")
-    filename = temp[1]
+    command = temp[0] + " > output.txt"
 
     # Run command using a shell - ensure that errors are caught
     try:
-        out = subprocess.check_output(cmd, shell=True)
+        out = subprocess.check_output(command, shell=True)
     # Any error will mean the command did not execute successfully - send a no response message to client
     # signifying the command failed                       
     except subprocess.CalledProcessError as grepexc:                                                                                                   
         l = "Did not receive response."
         c.send("Did not receive response.".encode('utf-8'))
-        break
+        continue
 
     # Open file that command's output was stored in
-    f = open(filename, 'r')
+    f = open("output.txt", 'r')
     l = f.read(1024)
     
     # Read output back to client (potential multiple segments if size(line) > 1024)
@@ -45,5 +45,6 @@ while True:
         c.send(l.encode('utf-8'))
         l = f.read(1024)
     #Tell client finished reading and shutdown the socket
+    print("Successful File Transmission")
     c.shutdown(socket.SHUT_RDWR)
 s.close()

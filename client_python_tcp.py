@@ -32,9 +32,8 @@ while port > 65535 or port < 0:
             break
         except Exception:
             print("Invalid port number.")
-       
 
-# Input Command - must be in the form "[command] > [filename]"
+# Input Command - can be in form "[command]" or "[command] > [filename.txt]"
 command = (input("Enter command:"))
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
