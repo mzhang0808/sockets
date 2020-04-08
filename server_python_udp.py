@@ -18,8 +18,10 @@ while True:
         cmd, addr = s.recvfrom(1024)
         if int(data.decode('utf-8')) == len(cmd.decode('utf-8')):
             s.sendto("ACK".encode('utf-8'), addr)
+            s.settimeout(None)
     except socket.timeout:
         print("Failed to receive instructions from the client.")
+        s.settimeout(None)
         continue
 
     # Get command and place output in output.txt

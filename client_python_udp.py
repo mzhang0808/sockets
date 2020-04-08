@@ -53,7 +53,7 @@ for i in range(0,4):
         print("Failed to send command. Terminating")
     try:
         s.sendto((str(len(command))).encode('utf-8'),addr)
-        #s.sendto(command.encode('utf-8'), addr)
+        s.sendto(command.encode('utf-8'), addr)
         s.settimeout(1)
         resp, addr = s.recvfrom(1024)
         if resp.decode('utf-8') == "ACK":
