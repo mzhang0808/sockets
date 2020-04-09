@@ -83,6 +83,7 @@ s.bind(('', PORT))
 while True:
     # test connection
     bigmac, addr = s.recvfrom(1024)
+    s.sendto("bigmac".decode('utf-8'), addr)
 
     cmd = receiveCommand(s, addr)
     if cmd == "Failed to receive instructions from the client.":
