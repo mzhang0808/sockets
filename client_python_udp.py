@@ -61,6 +61,7 @@ def validatePort(port):
         print("Invalid port number.")
         return False
     if port > 65535 or port < 0:
+        print("Invalid port number.")
         return False
     return True
 

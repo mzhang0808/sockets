@@ -19,6 +19,7 @@ def validatePort(port):
         return False
     # Check that it's in bounds
     if port > 65535 or port < 0:
+        print("Invalid port number.")
         return False
     return True
 
