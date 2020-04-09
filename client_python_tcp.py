@@ -83,9 +83,11 @@ command = (input("Enter command:"))
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+# Test connection
 if not testConnection(s, IP, port):
     sys.exit()
 
+# Send command
 if not sendCommand(s, command):
     s.close()
 

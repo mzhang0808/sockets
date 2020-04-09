@@ -1,5 +1,6 @@
 import subprocess
 import socket
+import time
 import sys
 import os
 
@@ -8,10 +9,18 @@ PORT = 3000
 def receiveCommand(s, addr):
     # Receive command with buffer size 1024
     data, addr = s.recvfrom(1024)
-    try: 
+    try:
+        # Set 0.5 ms timeout/deadlien 
         s.settimeout(0.5)
+        deadline = time.time() + 0.5
         cmd, addr = s.recvfrom(1024)
+        # Wait for valid command matching length (size) previously sent
         while(int(data.decode('utf-8')) != len(cmd.decode('utf-8'))):
+            # Means no command matching size was sent
+            if(time.time() >= deadline):
+                raise socket.timeout
+            # Update socket timeout
+            s.settimeout(deadline - time.time())
             cmd, addr = s.recvfrom(1024)
         s.sendto("ACK".encode('utf-8'), addr)
         s.settimeout(None)
@@ -40,9 +49,14 @@ def transferFile(s, addr):
                 # send actual message
                 s.sendto(l.encode('utf-8'),addr)
                 s.settimeout(1)
+                deadline = time.time() + 1.0
                 resp, addr = s.recvfrom(1024)
-                # wait for ACK
+                # wait for ACK - given 0.5 s timer
                 while(resp.decode('utf-8') != "ACK"):
+                    # Deadline passed - means no "ACK" received
+                    if(time.time() >= deadline):
+                        raise socket.timeout
+                    s.settimeout(deadline-time.time())
                     resp, addr = s.recvfrom(1024)
                 s.settimeout(None)
                 break

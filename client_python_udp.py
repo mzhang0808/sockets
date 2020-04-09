@@ -1,4 +1,5 @@
 import socket
+import time
 import sys
 
 def testConnection(s, addr):
@@ -6,7 +7,7 @@ def testConnection(s, addr):
     try:
         s.sendto("bigmac".encode('utf-8'), addr)
         return True
-    except socket.timeout:
+    except socket.error:
         print("Could not connect to server")
         return False
 
@@ -17,11 +18,19 @@ def sendCommand(command, s, addr):
             print("Failed to send command. Terminating")
             return False
         try:
+            # Send size first
             s.sendto((str(len(command))).encode('utf-8'),addr)
             s.sendto(command.encode('utf-8'), addr)
+            # Set timeout to receive "ACK" from server
             s.settimeout(1)
+            deadline = time.time() + 1.0
             resp, addr = s.recvfrom(1024)
             while(resp.decode('utf-8') != "ACK"):
+                # Means no "ACK" received
+                if(time.time() >= deadline):
+                    raise socket.timeout
+                # Update socket timeout
+                s.settimeout(deadline - time.time())
                 resp, addr = s.recvfrom(1024)
             s.settimeout(None)
             return True
@@ -71,8 +80,12 @@ def receiveOutput(s, addr):
         try:
             length, addr = s.recvfrom(1024)
             s.settimeout(0.5)
+            deadline = time.time() + 0.5
             l, addr = s.recvfrom(1024)
             while(int(length.decode('utf-8')) != len(l.decode('utf-8'))):
+                if(time.time() >= deadline):
+                    raise socket.timeout
+                s.settimeout(deadline - time.time())
                 l, addr = s.recvfrom(1024)
             s.sendto("ACK".encode('utf-8'), addr)
             s.settimeout(None)
