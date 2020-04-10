@@ -7,14 +7,17 @@ def testConnection(s, addr):
     try:
         s.sendto("bigmac".encode('utf-8'), addr)
         s.settimeout(1)
-        data = s.recvfrom(1024)
+        data, addr = s.recvfrom(1024)
         if data.decode('utf-8') == "bigmac":
+            s.settimeout(None)
             return True
     except socket.error:
         print("Could not connect to server")
+        s.settimeout(None)
         return False
     except socket.timeout:
         print("Could not connect to server")
+        s.ssettimeout(None)
         return False
 
 def sendCommand(command, s, addr):
