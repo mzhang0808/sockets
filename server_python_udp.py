@@ -100,7 +100,7 @@ def main():
             out = subprocess.check_output(command, shell=True)
         # Any error will mean the command did not execute successfully - send a no response message to client
         # signifying the command failed                       
-        except subprocess.CalledProcessError as grepexc:
+        except subprocess.CalledProcessError:
             s.sendto("Did not receive response.".encode('utf-8'),addr)
             continue
 
