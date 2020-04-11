@@ -63,33 +63,37 @@ def sendCommand(s, command):
 
     # Finished reading file
     f.close()
-    print ("File ", filename, " saved.")
+    print("File ", filename, " saved.")
     s.close()                # Close the connection
     return True
 
-while True:
-    IP = input("Enter server name or IP address:")
-    if validateIP(IP):
-        break
+def main():
 
-while True:
-    # Take port # as input
-    port = input("Enter port:")
-    if validatePort(port):
-        port = int(port)
-        break
+    while True:
+        IP = input("Enter server name or IP address:")
+        if validateIP(IP):
+            break
 
-# Input Command - can be in form "[command]" or "[command] > [filename.txt]"
-command = (input("Enter command:"))
+    while True:
+        # Take port # as input
+        port = input("Enter port:")
+        if validatePort(port):
+            port = int(port)
+            break
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # Input Command - can be in form "[command]" or "[command] > [filename.txt]"
+    command = (input("Enter command:"))
 
-# Test connection
-if not testConnection(s, IP, port):
-    sys.exit()
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Send command
-if not sendCommand(s, command):
-    s.close()
+    # Test connection
+    if not testConnection(s, IP, port):
+        sys.exit()
 
+    # Send command
+    if not sendCommand(s, command):
+        s.close()
+
+if __name__ == '__main__':
+    main()
 

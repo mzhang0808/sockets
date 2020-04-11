@@ -6,48 +6,60 @@ def transferFile(c):
     f = open("output.txt", 'r')
     l = f.read(1024)
     
-    # Read output back to client (potential multiple segments if size(line) > 1024)
-    while(l):
-        c.send(l.encode('utf-8'))
-        l = f.read(1024)
+    try:
+        # Read output back to client (potential multiple segments if size(line) > 1024)
+        while(l):
+            c.send(l.encode('utf-8'))
+            l = f.read(1024)
+    except Exception:
+        c.shutdown(socket.SHUT_RDWR)
+        f.close()
+        return False
     #Tell client finished reading and shutdown the socket
     print("Successful File Transmission")
+    f.close()
     c.shutdown(socket.SHUT_RDWR)
+    return True
 
-PORT = 3000
+def main():
 
-# Creates socket instance with address family ipv4 and TCP protocol
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    PORT = 3000
 
-# Bind socket to any machine & port 3000
-s.bind(('', PORT))
+    # Creates socket instance with address family ipv4 and TCP protocol
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Begin accepting connections
-s.listen()
+    # Bind socket to any machine & port 3000
+    s.bind(('', PORT))
 
-# Ensure it is always listening until empty command passed in 
-# or manually terminated
-while True:
-    # Establish connection
-    c, addr = s.accept()
+    # Begin accepting connections
+    s.listen()
 
-    # Receive command with buffer size 1024
-    data = c.recv(1024)
-    cmd = data.decode('utf-8')
+    # Ensure it is always listening until empty command passed in 
+    # or manually terminated
+    while True:
+        # Establish connection
+        c, addr = s.accept()
 
-    # Get command and place output in output.txt
-    temp = cmd.split(" > ")
-    command = temp[0] + " > output.txt"
+        # Receive command with buffer size 1024
+        data = c.recv(1024)
+        cmd = data.decode('utf-8')
 
-    # Run command using a shell - ensure that errors are caught
-    try:
-        out = subprocess.check_output(command, shell=True)
-    # Any error will mean the command did not execute successfully - send a no response message to client
-    # signifying the command failed                       
-    except subprocess.CalledProcessError as grepexc:
-        c.send("Did not receive response.".encode('utf-8'))
-        continue
+        # Get command and place output in output.txt
+        temp = cmd.split(" > ")
+        command = temp[0] + " > output.txt"
 
-    transferFile(c)
-    
-s.close()
+        # Run command using a shell - ensure that errors are caught
+        try:
+            out = subprocess.check_output(command, shell=True)
+        # Any error will mean the command did not execute successfully - send a no response message to client
+        # signifying the command failed                       
+        except subprocess.CalledProcessError as grepexc:
+            c.send("Did not receive response.".encode('utf-8'))
+            continue
+
+        transferFile(c)
+        
+    s.close()
+
+if __name__ == '__main__':
+    main()

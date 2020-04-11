@@ -68,39 +68,44 @@ def transferFile(s, addr):
             flag = True
             break
         l = f.read(1024)
+    f.close()
     if flag:
         return False
     #Tell client finished reading and shutdown the socket
     print("Successful File Transmission")
     return True
 
-# Creates socket instance with address family ipv4 and TCP protocol
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+def main():
+    # Creates socket instance with address family ipv4 and TCP protocol
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-# Bind socket to any machine & port 3000
-s.bind(('', PORT))
+    # Bind socket to any machine & port 3000
+    s.bind(('', PORT))
 
-while True:
-    # test connection
-    bigmac, addr = s.recvfrom(1024)
-    s.sendto("bigmac".encode('utf-8'), addr)
+    while True:
+        # test connection
+        bigmac, addr = s.recvfrom(1024)
+        s.sendto("bigmac".encode('utf-8'), addr)
 
-    cmd = receiveCommand(s, addr)
-    if cmd == "Failed to receive instructions from the client.":
-        continue
-    
-    # Get command and place output in output.txt
-    temp = cmd.decode("utf-8").split(" > ")
-    command = temp[0] + " > output.txt"
+        cmd = receiveCommand(s, addr)
+        if cmd == "Failed to receive instructions from the client.":
+            continue
+        
+        # Get command and place output in output.txt
+        temp = cmd.decode("utf-8").split(" > ")
+        command = temp[0] + " > output.txt"
 
-    # Run command using a shell - ensure that errors are caught
-    try:
-        out = subprocess.check_output(command, shell=True)
-    # Any error will mean the command did not execute successfully - send a no response message to client
-    # signifying the command failed                       
-    except subprocess.CalledProcessError as grepexc:
-        s.sendto("Did not receive response.".encode('utf-8'),addr)
-        continue
+        # Run command using a shell - ensure that errors are caught
+        try:
+            out = subprocess.check_output(command, shell=True)
+        # Any error will mean the command did not execute successfully - send a no response message to client
+        # signifying the command failed                       
+        except subprocess.CalledProcessError as grepexc:
+            s.sendto("Did not receive response.".encode('utf-8'),addr)
+            continue
 
-    if not transferFile(s, addr):
-        continue
+        if not transferFile(s, addr):
+            continue
+
+if __name__ == '__main__':
+    main()
