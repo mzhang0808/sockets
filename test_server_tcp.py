@@ -3,7 +3,7 @@ import subprocess
 from mock import Mock
 import server_python_tcp as s
 
-class TestClientTCP(unittest.TestCase):
+class TestServerTCP(unittest.TestCase):
 
     def test_transferFile(self):
         print("---Test Transfer File---")

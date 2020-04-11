@@ -5,6 +5,7 @@ from mock import Mock
 import client_python_udp as c
 
 class TestClientUDP(unittest.TestCase):
+    
     def test_validatePort(self):
         print("---Testing Validate Port---")
         # Test 2 invalid ports and 1 valid port

@@ -4,7 +4,7 @@ import subprocess
 from mock import Mock
 import server_python_udp as s
 
-class TestClientTCP(unittest.TestCase):
+class TestServerUDP(unittest.TestCase):
 
     def test_receiveCommand(self):
         print("---Test Receive Command---")
