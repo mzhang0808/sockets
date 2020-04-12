@@ -1,5 +1,6 @@
 import subprocess
 import socket
+import sys
 
 def transferFile(c):
     # Open file that command's output was stored in
@@ -23,13 +24,17 @@ def transferFile(c):
 
 def main():
 
-    PORT = 3000
+    PORT = int(sys.argv[1])
 
     # Creates socket instance with address family ipv4 and TCP protocol
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Bind socket to any machine & port 3000
-    s.bind(('', PORT))
+    try:
+        # Bind socket to any machine & port
+        s.bind(('', PORT))
+    except Exception:
+        print("Port in use")
+        sys.exit()
 
     # Begin accepting connections
     s.listen()

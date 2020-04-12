@@ -79,8 +79,14 @@ def main():
     # Creates socket instance with address family ipv4 and TCP protocol
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    # Bind socket to any machine & port 3000
-    s.bind(('', PORT))
+    PORT = int(sys.argv[1])
+
+    try:
+        # Bind socket to any machine & port
+        s.bind(('', PORT))
+    except Exception:
+        print("Already in use")
+        sys.exit()
 
     while True:
         # test connection
