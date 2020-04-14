@@ -13,6 +13,7 @@ def transferFile(c):
             c.send(l.encode('utf-8'))
             l = f.read(1024)
     except Exception:
+        c.send("Did not receive response.".encode('utf-8'))
         c.shutdown(socket.SHUT_RDWR)
         f.close()
         return False
