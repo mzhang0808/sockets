@@ -88,5 +88,6 @@ to connect to the given IP and port, <span>`Could not connect to server.`<span>
 would be printed and the unittest would pass as the function correctly
 prints out what it should. 
 
+***
 <a name="myfootnote1"><sup>1</sup></a> Note that you may need to use the command python3 instead of python
     as I have an alias on my configuration
